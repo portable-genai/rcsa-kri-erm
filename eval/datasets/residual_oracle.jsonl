@@ -1,0 +1,8 @@
+# Independently hand-computed residual risk. Policy: reduction effective=2 partial=1 ineffective=0;
+# residual_likelihood=max(1, likelihood-reduction); residual=impact*residual_likelihood;
+# band floors: red>=15, amber>=8, else green.
+{"id": "r1", "impact": 5, "likelihood": 5, "effectiveness": "ineffective", "expected_inherent": 25, "expected_residual": 25, "expected_band": "red"}
+{"id": "r2", "impact": 5, "likelihood": 4, "effectiveness": "effective", "expected_inherent": 20, "expected_residual": 10, "expected_band": "amber"}
+{"id": "r3", "impact": 2, "likelihood": 2, "effectiveness": "effective", "expected_inherent": 4, "expected_residual": 2, "expected_band": "green"}
+{"id": "r4", "impact": 4, "likelihood": 3, "effectiveness": "partial", "expected_inherent": 12, "expected_residual": 8, "expected_band": "amber"}
+{"id": "r5", "impact": 1, "likelihood": 5, "effectiveness": "effective", "expected_inherent": 5, "expected_residual": 3, "expected_band": "green"}

@@ -1,0 +1,5 @@
+# Independently hand-computed theme-driven reopen decisions over the seeded Aud3 theme fixture.
+# Policy: an attached theme with weight >= 3 forces a reopen.
+{"id": "t1", "control_id": "CTL-ACCESS-01", "expected_reopen": true}
+{"id": "t2", "control_id": "CTL-DR-02", "expected_reopen": false}
+{"id": "t3", "control_id": "CTL-CHG-04", "expected_reopen": false}

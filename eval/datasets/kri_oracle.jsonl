@@ -1,0 +1,7 @@
+# Independently hand-computed KRI evaluation. band: red when the value reaches the breach threshold,
+# amber when it reaches the warning threshold, else green (read through the breach direction); trend
+# from the last two points; consecutive breaches counts trailing breaching periods.
+{"id": "k1", "metric_key": "m_login", "direction": "upper", "warning": 2.0, "breach": 5.0, "series": [1.5, 4.0, 6.0, 7.5], "expected_band": "red", "expected_breached": true, "expected_trend": "worsening", "expected_consecutive": 2}
+{"id": "k2", "metric_key": "m_cap", "direction": "lower", "warning": 12.0, "breach": 10.5, "series": [13.1, 12.8, 12.9], "expected_band": "green", "expected_breached": false, "expected_trend": "improving", "expected_consecutive": 0}
+{"id": "k3", "metric_key": "m_amber", "direction": "upper", "warning": 2.0, "breach": 5.0, "series": [3.0], "expected_band": "amber", "expected_breached": false, "expected_trend": "stable", "expected_consecutive": 0}
+{"id": "k4", "metric_key": "m_persist", "direction": "upper", "warning": 2.0, "breach": 5.0, "series": [6.0, 6.0, 6.0], "expected_band": "red", "expected_breached": true, "expected_trend": "stable", "expected_consecutive": 3}

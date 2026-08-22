@@ -1,0 +1,3 @@
+# The golden duplicate-pair oracle over the seeded control library (independent of the engine's
+# proposal). Pairs are recorded sorted; the demo bank has exactly one true duplicate pair.
+{"id": "m1", "tenant": "demo-bank", "expected_pairs": [["CTL-ACCESS-01", "CTL-ACCESS-07"]]}
