@@ -40,7 +40,7 @@ Four things, and only one of them is code here:
 3. **Aud3, eventually.** The theme feed is one way and Aud3 is unbuilt. The offline fixture is the
    RECORDED CONTRACT, pinned by `tests/contract/test_theme_feed_contract.py`, so the remote adapter
    can be swapped in without a domain change when Aud3 ships.
-4. **The review console.** An Hrz7 deployment reachable at `HRZ_HUMAN_REVIEW_URL`. The managed router
+4. **The review console.** An Hrz7 deployment reachable at `HUMAN_REVIEW_URL`. The managed router
    REFUSES to swallow an escalation when this is empty, so a fork cannot ship rule R8 unwired and
    green.
 
