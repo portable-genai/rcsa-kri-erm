@@ -1,6 +1,6 @@
 # ui: the embeddable micro-frontend
 
-A Next.js App Router console for RCSA, KRI and ERM Operating Copilot (Erm1).
+A Next.js App Router console for RCSA, KRI and ERM Operating Copilot (`rcsa-kri-erm`).
 It runs standalone for a demo and embeds into a client's existing web application as an iframe,
 with the same security posture either way.
 

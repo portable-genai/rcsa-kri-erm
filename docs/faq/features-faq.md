@@ -19,7 +19,7 @@ deterministic engines and one narrated step:
    distance plus trend plus persistence, banded by policy.
 3. **Control de-duplication** (`domain/dedup.py`): cosine similarity over vectors from the
    embeddings port proposes merge candidates above a config-owned floor.
-4. **Theme-driven reopens** (`domain/themes.py`): an Aud3 theme attaches to an assessment when it
+4. **Theme-driven reopens** (`domain/themes.py`): an `issue-remediation-capa` theme attaches to an assessment when it
    names that assessment's control, and forces a reopen when its weight reaches the policy floor.
 
 Narration sits on top and computes nothing.
@@ -30,7 +30,7 @@ Three rules in the engines, all pure code:
 
 - **Only accepted ratings score.** `residual_for_assessment` reads `accepted_ratings` and never
   `proposed_ratings`, so a model-drafted or maker-drafted proposal moves no number until a checker
-  signs it off through Hrz7. An assessment carrying only proposals scores as if it had none, and the
+  signs it off through `human-review-console`. An assessment carrying only proposals scores as if it had none, and the
   tests pin that.
 - **Only adopted KRI definitions evaluate.** A proposed threshold is inert until a human adopts it.
 - **The bands are computed from a named policy.** `ResidualRiskPolicy` and `KriPolicy` are frozen
@@ -53,14 +53,14 @@ and why no merge is ever applied automatically. See [`../model-card.md`](../mode
 
 - **It will not keep a control catalog.** `ControlLibraryPort` is read-only by construction: there
   is no write method to call, and `tests/contract/test_no_control_catalog.py` fails the build if one
-  appears. Rgc7 is the system of record.
-- **It will not write back to Aud3.** The theme feed is one way for the same reason.
+  appears. `obligations-control-mapping` is the system of record.
+- **It will not write back to `issue-remediation-capa`.** The theme feed is one way for the same reason.
 - **It will not score a proposal.** Proposed ratings and unadopted KRI definitions are inert.
 - **It will not apply a merge.** Collapsing two risk lines is consequential, so a candidate is
   proposed and routed, never applied.
 - **It will not auto-execute a consequential result.** An assessment at or above the review band,
   every proposed merge, every KRI breach and every theme-driven reopen sets `requires_human_review`
-  and is ROUTED to the Hrz7 console in the same call that produced it (rule R8). A CRITICAL band
+  and is ROUTED to the `human-review-console` in the same call that produced it (rule R8). A CRITICAL band
   demands two approvals rather than one.
 - **It will not become healthy on a managed profile with placeholder reads bound.** The preflight
   refuses to start (`managed_readiness.py`).
@@ -77,7 +77,7 @@ tools, the demo and the eval; there is no HTTP route or CLI subcommand for an RC
 merge proposal, a KRI evaluation or a theme reopen, and `ErmService.evaluate_kris` and
 `ErmService.reopen_from_themes` have no tool of their own either. Adding those surfaces is
 straightforward and is not done. Note also that the repo carries two verticals side by side: the
-Erm1 engines (`domain/rcsa.py`, `domain/kri.py`, `domain/dedup.py`, `domain/themes.py`,
+`rcsa-kri-erm` engines (`domain/rcsa.py`, `domain/kri.py`, `domain/dedup.py`, `domain/themes.py`,
 `domain/erm_service.py`) and the template's generic triage service (`domain/triage_service.py`,
 `/v1/triage`, the CLI and the `triage_case` tool). The triage path is scaffolding the render started
 from, not the reason this system exists.
@@ -86,16 +86,16 @@ from, not the reason this system exists.
 
 | Concern | Owner | How this repo touches it |
 |---|---|---|
-| RCSA residual risk, KRI evaluation, control de-duplication and theme-driven reopens | **this repo (Erm1)** | four pure engines plus the orchestration in `domain/erm_service.py`. |
-| The obligation, policy, control and evidence graph | **Rgc7** obligations and control mapping | read over `ControlLibraryPort`, which has no write method. This repo keys its ratings on Rgc7's `control_id` and keeps no catalog. |
-| Control-effectiveness testing | **Aud2** continuous controls monitoring | its results reach this repo as effectiveness on the control records Rgc7 exposes; there is no second testing engine here. |
-| Thematic root-cause analysis over issues and losses | **Aud3** issue, remediation and CAPA tracker | read one way over `ThemeFeedPort`. Aud3 is unbuilt, so the offline fixture is the recorded contract, pinned by `tests/contract/test_theme_feed_contract.py`. |
-| Agent discovery and entitlements | **Hrz3** agent registry | this agent publishes a card; the registry owns discovery. |
-| Model and agent promotion | **Hrz4** AI quality and model risk | `eval/run_eval.py --mode gate` asks Hrz4; the offline smoke mode never promotes. |
-| Traces and the immutable audit sink | **Hrz5** agent observability | `AuditSinkPort` and `ObservabilityTracerPort`. |
-| Human review and maker-checker | **Hrz7** human review console | `ReviewRouterPort` over the shared `review-kit`. This repo produces escalations; it does not render a queue. |
-| Prompt-injection defence and output filtering | **Hrz1** agent guardrail gateway | **not wired today.** It becomes mandatory the moment untrusted free text reaches the narrator (rule R1), and control text already reaches the embedder. |
-| Grounded retrieval over an enterprise corpus | **Hrz2** enterprise knowledge base | not wired; this service reasons over its own artifacts and the reads above. |
+| RCSA residual risk, KRI evaluation, control de-duplication and theme-driven reopens | **this repo (`rcsa-kri-erm`)** | four pure engines plus the orchestration in `domain/erm_service.py`. |
+| The obligation, policy, control and evidence graph | `obligations-control-mapping` and control mapping | read over `ControlLibraryPort`, which has no write method. This repo keys its ratings on `obligations-control-mapping`'s `control_id` and keeps no catalog. |
+| Control-effectiveness testing | `continuous-controls-monitoring` continuous controls monitoring | its results reach this repo as effectiveness on the control records `obligations-control-mapping` exposes; there is no second testing engine here. |
+| Thematic root-cause analysis over issues and losses | `issue-remediation-capa` issue, remediation and CAPA tracker | read one way over `ThemeFeedPort`. `issue-remediation-capa` is unbuilt, so the offline fixture is the recorded contract, pinned by `tests/contract/test_theme_feed_contract.py`. |
+| Agent discovery and entitlements | `agent-registry` | this agent publishes a card; the registry owns discovery. |
+| Model and agent promotion | `model-quality-gate` AI quality and model risk | `eval/run_eval.py --mode gate` asks `model-quality-gate`; the offline smoke mode never promotes. |
+| Traces and the immutable audit sink | `agent-observability` agent observability | `AuditSinkPort` and `ObservabilityTracerPort`. |
+| Human review and maker-checker | `human-review-console` human review console | `ReviewRouterPort` over the shared `review-kit`. This repo produces escalations; it does not render a queue. |
+| Prompt-injection defence and output filtering | `agent-guardrail-gateway` agent guardrail gateway | **not wired today.** It becomes mandatory the moment untrusted free text reaches the narrator (rule R1), and control text already reaches the embedder. |
+| Grounded retrieval over an enterprise corpus | `enterprise-knowledge-base` | not wired; this service reasons over its own artifacts and the reads above. |
 
 ### Can I demo it without a cloud project?
 
@@ -113,5 +113,5 @@ of GREEN, AMBER and RED plus at least one merge candidate, one breach and one re
 The honest list is [`../practices-audit.md`](../practices-audit.md) and the `TODO (repo owner)` rows
 in [`../../COMPLIANCE.md`](../../COMPLIANCE.md). The four that matter most for a production
 decision: the three managed reads named in `managed_readiness.py`, HTTP and CLI surfaces for the ERM
-engines, the Hrz1 guardrail binding, and registering this repo's metric bundle with Hrz4 so
+engines, the `agent-guardrail-gateway` binding, and registering this repo's metric bundle with `model-quality-gate` so
 `--mode gate` has an authority to ask.

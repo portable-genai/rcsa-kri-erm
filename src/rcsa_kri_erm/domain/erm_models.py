@@ -7,7 +7,7 @@ number that appears on one of these is produced by an engine, never by a model.
 The house rule the type system enforces here: a *proposed* rating is inert. ``RcsaAssessment``
 separates ``proposed_ratings`` from ``accepted_ratings`` so residual scoring can only ever read
 the accepted set, and a model-authored proposal cannot move a number until a maker signs it off
-through Hrz7 (rule R8). See :mod:`.rcsa`.
+through human-review-console (rule R8). See :mod:`.rcsa`.
 """
 
 from __future__ import annotations
@@ -33,7 +33,9 @@ RAG_ORDER: tuple[RagBand, ...] = (RagBand.RED, RagBand.AMBER, RagBand.GREEN)
 
 
 class ControlEffectiveness(LenientStrEnum):
-    """A control's operating effectiveness, as read from Rgc7 evidence or a maker's rating."""
+    """A control's operating effectiveness, as read from obligations-control-mapping evidence or a
+    maker's rating.
+    """
 
     INEFFECTIVE = "ineffective"
     PARTIAL = "partial"
@@ -57,10 +59,13 @@ class BreachDirection(LenientStrEnum):
 
 @dataclass(frozen=True, slots=True)
 class ControlRecord:
-    """One control read from Rgc7's control library (this repo keeps no catalog of its own).
+    """One control read from obligations-control-mapping's control library (this repo keeps no
+    catalog of its own).
 
-    ``control_id`` is Rgc7's identifier; ``effectiveness`` is the latest Aud2 result exposed as an
-    evidence node on Rgc7's graph. This repo persists RATINGS and ASSESSMENTS keyed on this id, and
+    ``control_id`` is obligations-control-mapping's identifier; ``effectiveness`` is the latest
+    continuous-controls-monitoring result exposed as an
+    evidence node on obligations-control-mapping's graph. This repo persists RATINGS and ASSESSMENTS
+    keyed on this id, and
     never the control's catalog membership. ``tenant`` is the owning partition for cross-tenant
     authorisation.
     """
@@ -159,7 +164,7 @@ class KriEvaluation:
 
 @dataclass(frozen=True, slots=True)
 class Breach:
-    """A consequential KRI breach: it sets human review and routes to Hrz7."""
+    """A consequential KRI breach: it sets human review and routes to human-review-console."""
 
     kri_id: str
     category: str
@@ -178,7 +183,7 @@ class MergeCandidate:
     """A proposed de-duplication of two controls, above the config similarity floor.
 
     A merge is consequential (it collapses two risk lines into one), so it is a PROPOSAL routed to
-    Hrz7, never an automatic action.
+    human-review-console, never an automatic action.
     """
 
     left_id: str
@@ -188,7 +193,7 @@ class MergeCandidate:
 
 @dataclass(frozen=True, slots=True)
 class Theme:
-    """An Aud3 thematic cluster consumed as a one-way risk signal."""
+    """An issue-remediation-capa thematic cluster consumed as a one-way risk signal."""
 
     theme_id: str
     label: str

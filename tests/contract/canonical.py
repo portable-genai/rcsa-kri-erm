@@ -208,7 +208,7 @@ CANONICAL_CALLS: dict[str, PortCase] = {
         answered=_control_library_answered,
         # The managed read lazily imports google.auth for its S2S call, absent offline.
         managed_refusal=(ImportError,),
-        detail="read Rgc7's control library for a tenant",
+        detail="read obligations-control-mapping's control library for a tenant",
     ),
     "embeddings": PortCase(
         invoke=_embeddings_invoke,
@@ -229,7 +229,7 @@ CANONICAL_CALLS: dict[str, PortCase] = {
         answered=_theme_feed_answered,
         # The managed read lazily imports google.auth for its S2S call, absent offline.
         managed_refusal=(ImportError,),
-        detail="read Aud3's themes for a tenant",
+        detail="read issue-remediation-capa's themes for a tenant",
     ),
     "tracer": PortCase(
         invoke=_tracer_invoke,
@@ -243,7 +243,7 @@ CANONICAL_CALLS: dict[str, PortCase] = {
     "evaluation": PortCase(
         invoke=_evaluation_invoke,
         answered=_evaluation_answered,
-        # The managed gate reaches Hrz4 over HTTP, which is unreachable offline.
+        # The managed gate reaches model-quality-gate over HTTP, which is unreachable offline.
         managed_refusal=(Exception,),
         detail="score one golden dataset through the promotion authority",
     ),

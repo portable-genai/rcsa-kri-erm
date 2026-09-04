@@ -1,12 +1,12 @@
 """Control de-duplication: propose merge candidates from embeddings, above a config floor.
 
-Slice 1 of the Erm1 plan. The embeddings themselves come from a port (Vertex under ``gcp``, a
-deterministic hashing embedder offline); this module is PURE arithmetic over the vectors it is
+Slice 1 of the rcsa-kri-erm plan. The embeddings themselves come from a port (Vertex under ``gcp``,
+a deterministic hashing embedder offline); this module is PURE arithmetic over the vectors it is
 handed. Cosine similarity is deterministic, so the same control set always proposes the same
 candidates.
 
-A merge is CONSEQUENTIAL: it collapses two risk lines into one. So the engine only ever
-*proposes* candidates above the floor; accepting a merge routes to Hrz7 (rule R8). Nothing here
+A merge is CONSEQUENTIAL: it collapses two risk lines into one. So the engine only ever *proposes*
+candidates above the floor; accepting a merge routes to human-review-console (rule R8). Nothing here
 imports a framework, a cloud SDK or the port.
 """
 

@@ -138,7 +138,7 @@ def test_review_payload_is_redacted_in_every_field_that_crosses_the_wire(
 
     ``subject`` was masked while ``case_ref`` and ``source_key`` carried the same string raw, and
     the citation ``snippet`` was masked while its ``source_id`` and ``title`` were not. Every one
-    of them is on the wire to Hrz7, so every one of them is scanned here.
+    of them is on the wire to human-review-console, so every one of them is scanned here.
     """
     result = triage_service.triage(sample_cases.PII_SUBJECT_CASE, actor=sample_cases.ACTOR)
     review = result_to_review(result, maker=sample_cases.ACTOR, tenant=sample_cases.TENANT)

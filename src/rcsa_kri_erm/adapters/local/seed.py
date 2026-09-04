@@ -1,4 +1,5 @@
-"""The offline seed: one fictional bank's control library, KRI feed and Aud3 themes.
+"""The offline seed: one fictional bank's control library, KRI feed and issue-remediation-capa
+themes.
 
 Synthetic data only. ``demo-bank`` is the owning tenant of everything here (the same partition the
 seeded personas resolve to), so a caller whose verified identity resolves to any other tenant is
@@ -22,7 +23,8 @@ from ...domain.erm_models import (
 
 SEED_TENANT = "demo-bank"
 
-#: Rgc7's control library for the demo bank. Two access-recertification controls are deliberately
+#: obligations-control-mapping's control library for the demo bank. Two access-recertification
+#: controls are deliberately
 #: near-duplicates so the de-dup engine proposes a merge; effectiveness varies so residual bands do.
 SEED_CONTROLS: tuple[ControlRecord, ...] = (
     ControlRecord(
@@ -103,7 +105,8 @@ SEED_METRICS: tuple[MetricPoint, ...] = (
     MetricPoint("outsource_sla_breaches", 9.0, date(2026, 8, 31)),
 )
 
-#: Aud3 themes for the demo bank (the frozen contract until Aud3 is built). A high-weight theme
+#: issue-remediation-capa themes for the demo bank (the frozen contract until issue-remediation-capa
+#: is built). A high-weight theme
 #: names an access control so the trigger engine reopens that assessment.
 SEED_THEMES: tuple[Theme, ...] = (
     Theme(

@@ -1,14 +1,14 @@
 """Local ControlLibraryPort: the seeded control library of the demo bank (SDK-free).
 
-Stands in for a remote read of Rgc7's control library. It is READ-ONLY (the port has no write
-method), so this repo keeps no catalog of its own even in the offline profile: the fixture IS
-Rgc7's library for the demo tenant.
+Stands in for a remote read of obligations-control-mapping's control library. It is READ-ONLY (the
+port has no write method), so this repo keeps no catalog of its own even in the offline profile: the
+fixture IS obligations-control-mapping's library for the demo tenant.
 
 A read for any OTHER tenant is REFUSED, not answered. Returning an empty tuple is a successful
-answer indistinguishable from a legitimate "Rgc7 holds no controls for this tenant": the de-dup
-sweep embeds nothing, proposes nothing and reports "no merge candidates" as a finding, so an
-isolation failure and a clean library look identical to every caller and every log line. See
-``domain/errors.py``.
+answer indistinguishable from a legitimate "obligations-control-mapping holds no controls for this
+tenant": the de-dup sweep embeds nothing, proposes nothing and reports "no merge candidates" as a
+finding, so an isolation failure and a clean library look identical to every caller and every log
+line. See ``domain/errors.py``.
 """
 
 from __future__ import annotations

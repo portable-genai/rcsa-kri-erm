@@ -1,8 +1,8 @@
-"""Local ThemeFeedPort: the frozen Aud3 theme fixture (SDK-free).
+"""Local ThemeFeedPort: the frozen issue-remediation-capa theme fixture (SDK-free).
 
-Aud3 is not built, so this is the RECORDED CONTRACT of its one-way theme feed: the shape a remote
-adapter will read once Aud3 ships. It is read-only (the port has no write path) and serves the demo
-bank's themes.
+issue-remediation-capa is not built, so this is the RECORDED CONTRACT of its one-way theme feed: the
+shape a remote adapter will read once issue-remediation-capa ships. It is read-only (the port has no
+write path) and serves the demo bank's themes.
 
 A read for any OTHER tenant is REFUSED, not answered. Returning an empty tuple leaves the reopen
 engine deciding every assessment over an empty theme set and reporting "no theme names this
@@ -20,7 +20,9 @@ from .seed import SEED_TENANT, SEED_THEMES
 
 
 class LocalThemeFeedAdapter:
-    """Serve the frozen Aud3 theme fixture for the owning tenant; refuse any other."""
+    """Serve the frozen issue-remediation-capa theme fixture for the owning tenant; refuse any
+    other.
+    """
 
     def __init__(self, settings: Settings) -> None:
         self._settings = settings

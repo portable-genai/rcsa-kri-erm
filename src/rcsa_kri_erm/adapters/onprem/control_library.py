@@ -1,8 +1,8 @@
 """On-prem ControlLibraryPort: fail-fast portability placeholder.
 
-The client wires its own read of the control system of record (its Rgc7 deployment or an
-equivalent) behind this seam. Read-only, and it refuses at call time rather than returning an empty
-library that a caller could mistake for "no controls".
+The client wires its own read of the control system of record (its obligations-control-mapping
+deployment or an equivalent) behind this seam. Read-only, and it refuses at call time rather than
+returning an empty library that a caller could mistake for "no controls".
 """
 
 from __future__ import annotations

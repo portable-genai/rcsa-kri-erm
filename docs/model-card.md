@@ -1,4 +1,4 @@
-# Model card: RCSA, KRI and ERM Operating Copilot (Erm1)
+# Model card: RCSA, KRI and ERM Operating Copilot (`rcsa-kri-erm`)
 
 This is a STARTER model card. It records the model boundary as built and the controls that must be
 completed before a managed deployment. The deterministic engines are the system of record; the
@@ -24,7 +24,7 @@ swapping a model can change what the system proposes; it is covered here for tha
 - **Embeddings do**: turn control text into vectors, and nothing else. The de-dup engine that reads
   them is pure arithmetic and never learns which embedder produced them.
 - **Embeddings do NOT**: decide a merge. `propose_merges` only ever PROPOSES pairs above the
-  similarity floor, and every proposal is routed to Hrz7 because a merge collapses two risk lines.
+  similarity floor, and every proposal is routed to `human-review-console` because a merge collapses two risk lines.
   A different embedder can change which pairs are proposed, which is exactly why the floor is
   calibrated to the bound embedder and why no merge is ever applied automatically.
 
@@ -47,11 +47,11 @@ swapping a model can change what the system proposes; it is covered here for tha
   already-filtered service output could never go red.
 - Only ACCEPTED ratings score. `RcsaAssessment` separates `proposed_ratings` from
   `accepted_ratings`, and `residual_for_assessment` reads only the accepted set, so a model-drafted
-  proposal moves no number until a maker signs it off through Hrz7.
+  proposal moves no number until a maker signs it off through `human-review-console`.
 - Personal data is masked before the audit write, before an outbound review payload and before a
   tool result can enter a model's context (`domain/pii.py`, `adapters/_review_payload.py`,
   `agent/tools.py`).
-- Every consequential outcome sets `requires_human_review` and is routed to Hrz7 (rule R8) in the
+- Every consequential outcome sets `requires_human_review` and is routed to `human-review-console` (rule R8) in the
   same call: an assessment at or above the review band, every proposed merge, every KRI breach and
   every theme-driven reopen. `tests/unit/test_review_routing.py` asserts the routing rather than the
   flag, and a CRITICAL band demands two approvals rather than one
@@ -73,8 +73,8 @@ swapping a model can change what the system proposes; it is covered here for tha
 
 Both managed adapters execute real calls, so neither appears in
 `managed_readiness.INCOMPLETE_MANAGED_OPERATIONS`. What does appear there, and therefore blocks a
-managed boot until it is implemented, is the Rgc7 control-library read, the BigQuery metric feed
-and the Aud3 theme feed.
+managed boot until it is implemented, is the `obligations-control-mapping` control-library read, the BigQuery metric feed
+and the `issue-remediation-capa` theme feed.
 
 ## What the eval actually measures
 
@@ -113,10 +113,10 @@ grounded by construction. It cannot tell you how a real Gemini reply behaves.
   The embeddings seam has no budget either, and it is called once per control on every merge
   proposal.
 - **Evaluation of the live models**: the offline eval scores the deterministic pipeline with the
-  stub narrator and the hashing embedder. Add a managed-profile run, registered with the Hrz4
+  stub narrator and the hashing embedder. Add a managed-profile run, registered with the `model-quality-gate`
   promotion gate (P-08, rule R5), that scores `breach_narration_groundedness` with the real model
   bound and `merge_precision` with the real embedder bound.
-- **Prompt-injection screening** (rule R1): the Hrz1 guardrail gateway is not bound. Screen any
+- **Prompt-injection screening** (rule R1): the `agent-guardrail-gateway` is not bound. Screen any
   untrusted free text that reaches the facts block, and fail closed to deterministic-only when the
   screen is unavailable. The exposure is small today, because the facts block carries engine
   integers, and it grows the moment control descriptions or theme narratives from an external

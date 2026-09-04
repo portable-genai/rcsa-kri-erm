@@ -1,19 +1,18 @@
 """KRI/KCI engine: threshold and trend evaluation, worst-wins roll-up, breach severity.
 
-Slice 3 of the Erm1 plan. Every consequential judgement is pure code over a frozen, config-owned
-:class:`KriPolicy`:
+Slice 3 of the rcsa-kri-erm plan. Every consequential judgement is pure code over a frozen,
+config-owned :class:`KriPolicy`:
 
 * **Only adopted definitions evaluate.** :func:`evaluate` skips any
-  :class:`~.erm_models.KriDefinition` whose ``adopted`` flag is False, so a model-proposed
-  threshold is inert until a human adopts it.
-* **Threshold evaluation is exact.** A value is banded GREEN / AMBER / RED against the definition's
-  warning and breach thresholds, respecting :class:`~.erm_models.BreachDirection` (upper vs lower
-  bound). The eval oracle proves this exact at 1.0 and provably red.
-* **Trend is deterministic** from the ordered feed at an explicit ``as_of``: the latest point
-  versus the previous one, worse/better/stable read through the breach direction.
-* **Breach severity is an additive named-driver score** (crib of Rsk1's materiality engine):
-  threshold distance, trend direction and persistence are named drivers summed into an integer
-  and banded by config. The LLM never produces the score; it narrates it.
+  :class:`~.erm_models.KriDefinition` whose ``adopted`` flag is False, so a model-proposed threshold
+  is inert until a human adopts it. * **Threshold evaluation is exact.** A value is banded GREEN /
+  AMBER / RED against the definition's warning and breach thresholds, respecting
+  :class:`~.erm_models.BreachDirection` (upper vs lower bound). The eval oracle proves this exact at
+  1.0 and provably red. * **Trend is deterministic** from the ordered feed at an explicit ``as_of``:
+  the latest point versus the previous one, worse/better/stable read through the breach direction. *
+  **Breach severity is an additive named-driver score** (crib of compliance-advisory's materiality
+  engine): threshold distance, trend direction and persistence are named drivers summed into an
+  integer and banded by config. The LLM never produces the score; it narrates it.
 
 No web framework, no cloud SDK, no port, no clock beyond the caller-supplied ``as_of``.
 """
@@ -199,7 +198,8 @@ def breach_from_evaluation(
 ) -> Breach | None:
     """Compute the additive named-driver breach severity, or ``None`` if not breached.
 
-    The score sums three named drivers (crib of Rsk1's materiality engine): the clamped distance
+    The score sums three named drivers (crib of compliance-advisory's materiality engine): the
+    clamped distance
     past the breach threshold, a trend contribution, and a persistence contribution for consecutive
     breaches. The band comes from config-owned floors. A model never sees or sets this number.
     """

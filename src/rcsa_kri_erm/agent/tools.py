@@ -184,7 +184,7 @@ def assess_rcsa_control(
     result is routed to the human-review console in this same call (rule R8).
 
     Args:
-      control_id: The Rgc7 control id the assessment is keyed on.
+      control_id: The obligations-control-mapping control id the assessment is keyed on.
       impact: Inherent impact on the 1..5 scale.
       likelihood: Inherent likelihood on the 1..5 scale.
       tenant: The tenant partition the assessment is filed under. REQUIRED, and never defaulted:
@@ -232,7 +232,8 @@ def propose_control_merges(
 ) -> dict[str, Any]:
     """Propose de-duplication merges over the control library and route each to review.
 
-    The library is READ from Rgc7 (this repo keeps no catalog); the embeddings come from the
+    The library is READ from obligations-control-mapping (this repo keeps no catalog); the
+    embeddings come from the
     bound embedder; the candidate pairs are pure cosine arithmetic. A merge collapses two risk
     lines, so every proposal is routed to the human-review console (rule R8), never auto-applied.
 

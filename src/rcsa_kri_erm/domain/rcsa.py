@@ -1,17 +1,16 @@
 """Residual-risk engine: pure code over ACCEPTED ratings, config-owned policy numbers.
 
-Slice 2 of the Erm1 plan. The consequential residual score is arithmetic on a frozen,
+Slice 2 of the rcsa-kri-erm plan. The consequential residual score is arithmetic on a frozen,
 bank-owned :class:`ResidualRiskPolicy` (B4: policy numbers in config, engine in code). Two rules
 make it defensible in front of a regulator:
 
 * **Only accepted ratings score.** :func:`residual_for_assessment` reads
-  ``assessment.accepted_ratings`` and never ``proposed_ratings``. A model-drafted proposal
-  changes no number until a maker signs it off through Hrz7. ``tests`` prove an assessment with
-  only proposals scores as if it had none.
-* **Effectiveness reduces likelihood, never impact.** A working control makes a loss less
-  likely; it does not make the loss smaller. The reduction is a config-owned step per
-  effectiveness level, and residual likelihood is floored at 1 so a control can never zero out a
-  risk.
+  ``assessment.accepted_ratings`` and never ``proposed_ratings``. A model-drafted proposal changes
+  no number until a maker signs it off through human-review-console. ``tests`` prove an assessment
+  with only proposals scores as if it had none. * **Effectiveness reduces likelihood, never
+  impact.** A working control makes a loss less likely; it does not make the loss smaller. The
+  reduction is a config-owned step per effectiveness level, and residual likelihood is floored at 1
+  so a control can never zero out a risk.
 
 Nothing here imports a framework, a cloud SDK or a port. The LLM never produces a score; it only
 narrates one (see ``erm_narration.py``).

@@ -1,4 +1,4 @@
-"""RCSA, KRI and ERM Operating Copilot (Erm1).
+"""RCSA, KRI and ERM Operating Copilot (rcsa-kri-erm).
 
 Second-line ERM copilot with a deterministic residual-risk and KRI-breach engine.
 

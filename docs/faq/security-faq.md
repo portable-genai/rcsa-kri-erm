@@ -62,8 +62,8 @@ setting the token switched the guard off for the end-user routes it was protecti
 ### Can a managed deployment go live with half its reads unimplemented?
 
 No. Three managed adapters are still placeholders that raise, so
-`managed_readiness.INCOMPLETE_MANAGED_OPERATIONS` names them (the Rgc7 control-library read in both
-its methods, the BigQuery metric feed and the Aud3 theme feed) and the API preflight REFUSES to
+`managed_readiness.INCOMPLETE_MANAGED_OPERATIONS` names them (the `obligations-control-mapping` control-library read in both
+its methods, the BigQuery metric feed and the `issue-remediation-capa` theme feed) and the API preflight REFUSES to
 start under a managed profile while any of them is bound to a port the request path executes.
 Terraform's `managed_profile_implemented` local is the deploy-time half of the same rule.
 `tests/unit/test_managed_readiness.py` is the standing gate.
@@ -94,8 +94,7 @@ There is a second model seam worth naming in a security review: the EMBEDDER. Co
 to it (Vertex AI under `gcp`), and its vectors feed the de-dup engine. It cannot invent a merge,
 because every candidate is routed to a human and none is applied automatically, but it is a data
 egress path and a model whose behaviour changes what gets proposed. See
-[`../model-card.md`](../model-card.md). Prompt-injection screening through the Hrz1 guardrail
-gateway is **not** wired yet on either seam.
+[`../model-card.md`](../model-card.md). Prompt-injection screening through the `agent-guardrail-gateway` is **not** wired yet on either seam.
 
 ### How is the audit trail protected?
 
@@ -121,14 +120,14 @@ expression cannot tell apart.
 
 - **Login.** This repo authenticates nobody itself: the platform in front of it does, and the UI
   forwards the assertion without parsing or trusting a parsed copy.
-- **Injection defence and output filtering.** Owned by Hrz1; not bound yet.
-- **The review queue.** Owned by Hrz7; this repo produces escalations and routes them.
-- **The control library.** Owned by Rgc7. `ControlLibraryPort` has no write method at all, and
+- **Injection defence and output filtering.** Owned by `agent-guardrail-gateway`; not bound yet.
+- **The review queue.** Owned by `human-review-console`; this repo produces escalations and routes them.
+- **The control library.** Owned by `obligations-control-mapping`. `ControlLibraryPort` has no write method at all, and
   `tests/contract/test_no_control_catalog.py` proves it, so this repo cannot grow a shadow catalog.
-- **Control-effectiveness testing.** Owned by Aud2; its results arrive as effectiveness on the
-  control records Rgc7 exposes.
-- **Thematic root-cause analysis.** Owned by Aud3; the feed is read one way and never written back.
+- **Control-effectiveness testing.** Owned by `continuous-controls-monitoring`; its results arrive as effectiveness on the
+  control records `obligations-control-mapping` exposes.
+- **Thematic root-cause analysis.** Owned by `issue-remediation-capa`; the feed is read one way and never written back.
 - **Network egress control.** VPC-SC governs access to Google APIs across perimeters, not arbitrary
   internet egress. The private-egress rule that lets this service reach the control library, the
-  metric and theme feeds and the Hrz7 console and nothing else is an adopter network decision,
+  metric and theme feeds and the `human-review-console` and nothing else is an adopter network decision,
   called out in `COMPLIANCE.md` P-01.

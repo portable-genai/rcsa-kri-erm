@@ -1,9 +1,9 @@
 """The ERM orchestration service: engines + narration + redact-before-audit + R8 routing.
 
 This is the seam where the four deterministic engines (``rcsa``, ``kri``, ``dedup``, ``themes``)
-meet the ports. The engines own every number; this service only sequences them, narrates the
-result through the model (schema-validated, discarded on failure), writes an already-redacted
-audit record, and ROUTES every consequential outcome to Hrz7 in the same call that produced it
+meet the ports. The engines own every number; this service only sequences them, narrates the result
+through the model (schema-validated, discarded on failure), writes an already-redacted audit record,
+and ROUTES every consequential outcome to human-review-console in the same call that produced it
 (rule R8). It never decides a band or a score itself.
 
 Consequential outcomes, each routed the moment it is produced:
@@ -120,7 +120,9 @@ _PROPOSE_MERGES_SPAN = "erm.propose_control_merges"
 
 
 class ErmService:
-    """Sequence the ERM engines, narrate, audit and route consequential outcomes to Hrz7."""
+    """Sequence the ERM engines, narrate, audit and route consequential outcomes to
+    human-review-console.
+    """
 
     def __init__(
         self,
@@ -219,7 +221,8 @@ class ErmService:
     # Slice 1: control de-duplication
     # ------------------------------------------------------------------ #
     def propose_control_merges(self, tenant: str, *, actor: str) -> MergeOutcome:
-        """Read the library, embed controls, propose merges, and route each proposal to Hrz7.
+        """Read the library, embed controls, propose merges, and route each proposal to
+        human-review-console.
 
         One span for the whole sweep, with structural attributes only: the action, the actor
         and the tenant. Never a control id, a title, a description or a similarity figure.
@@ -264,7 +267,9 @@ class ErmService:
     def evaluate_kris(
         self, definitions: tuple[KriDefinition, ...], *, as_of: str, actor: str, tenant: str = ""
     ) -> KriOutcome:
-        """Evaluate adopted KRIs, roll up worst-wins, and route every breach to Hrz7."""
+        """Evaluate adopted KRIs, roll up worst-wins, and route every breach to
+        human-review-console.
+        """
         metric_keys = tuple(d.metric_key for d in definitions if d.adopted)
         points = self._metric_feed.fetch(metric_keys, as_of)
         evaluations = evaluate(definitions, points, as_of)
@@ -314,12 +319,14 @@ class ErmService:
         )
 
     # ------------------------------------------------------------------ #
-    # Slice 4: Aud3 theme consumption and reopen triggers
+    # Slice 4: issue-remediation-capa theme consumption and reopen triggers
     # ------------------------------------------------------------------ #
     def reopen_from_themes(
         self, assessments: tuple[RcsaAssessment, ...], tenant: str, *, actor: str
     ) -> ReopenOutcome:
-        """Read Aud3 themes, decide reopens deterministically, route each reopen to Hrz7."""
+        """Read issue-remediation-capa themes, decide reopens deterministically, route each reopen
+        to human-review-console.
+        """
         themes = self._theme_feed.themes(tenant)
         decisions = reopen_decisions(assessments, themes, self._theme_policy)
         refs: list[str] = []
