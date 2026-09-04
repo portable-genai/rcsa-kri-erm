@@ -1,16 +1,16 @@
-"""Freeze the Aud3 theme-feed contract while Aud3 is unbuilt.
+"""Freeze the issue-remediation-capa theme-feed contract while issue-remediation-capa is unbuilt.
 
-Aud3 (`issue-remediation-capa`) is a catalog sibling that is not built, so Erm1 consumes its
-one-way theme feed through a FROZEN fixture whose shape is pinned here. When Aud3 ships, its remote
-adapter must return this same shape; this test is the recorded agreement, so a drift on either side
-is a build failure rather than a silent mismatch at integration time.
+issue-remediation-capa is a catalog sibling that is not built, so rcsa-kri-erm consumes its one-way
+theme feed through a FROZEN fixture whose shape is pinned here. When issue-remediation-capa ships,
+its remote adapter must return this same shape; this test is the recorded agreement, so a drift on
+either side is a build failure rather than a silent mismatch at integration time.
 
 The contract: `themes(tenant)` returns a tuple of `Theme` records, each carrying a stable
 `theme_id`, a human label, the tuple of `control_ids` the theme spans, an integer `weight`, and the
-member issue ids that back it. The owning tenant reads its themes; any other tenant is REFUSED.
-That last clause is part of the frozen contract, so Aud3's remote adapter has to refuse too:
-pinning the opposite (`themes("some-other-bank") == ()`) would record a silent empty answer as the
-agreed behaviour and carry that defect into Aud3 at integration time.
+member issue ids that back it. The owning tenant reads its themes; any other tenant is REFUSED. That
+last clause is part of the frozen contract, so issue-remediation-capa's remote adapter has to refuse
+too: pinning the opposite (`themes("some-other-bank") == ()`) would record a silent empty answer as
+the agreed behaviour and carry that defect into issue-remediation-capa at integration time.
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ def _adapter() -> LocalThemeFeedAdapter:
 
 def test_theme_feed_returns_the_frozen_shape() -> None:
     themes = _adapter().themes(_TENANT)
-    assert themes, "the frozen Aud3 fixture must serve the demo tenant's themes"
+    assert themes, "the frozen issue-remediation-capa fixture must serve the demo tenant's themes"
     assert all(isinstance(t, Theme) for t in themes)
     got = {t.theme_id: (t.control_ids, t.weight) for t in themes}
     assert got == _EXPECTED

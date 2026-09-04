@@ -1,4 +1,4 @@
-# RCSA, KRI and ERM Operating Copilot (Erm1) serving image.
+# RCSA, KRI and ERM Operating Copilot (rcsa-kri-erm) serving image.
 #
 # Supply-chain hardening (practices checks D1/D2/D4): the base image is DIGEST-pinned so a
 # re-pushed tag cannot change what ships, dependencies come from the committed lockfile rather

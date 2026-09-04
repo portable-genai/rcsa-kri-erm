@@ -1,13 +1,14 @@
 """Shared conversion from an escalated result to an ``review-kit`` Review payload.
 
-Lives in the adapter layer, not the pure domain, because it depends on the kit. EVERY content
-field is redacted BEFORE it leaves the process (the same redact-before-anything rule the audit
-write obeys), using the shared ``pii-kit``, so no raw identifier reaches Hrz7 over the wire;
-Hrz7 redacts again before its own audit write (defence in depth). "Every" is written out here
-because the earlier version masked ``subject``, ``summary`` and the citation ``snippet`` while
-``case_ref``, ``source_key`` and the citation ``source_id`` and ``title`` carried the same text
-raw. ``maker`` and ``tenant`` are asserted here and trusted by Hrz7 because the caller is an
-authenticated S2S service; per-hop on-behalf-of token exchange is the deferred next layer.
+Lives in the adapter layer, not the pure domain, because it depends on the kit. EVERY content field
+is redacted BEFORE it leaves the process (the same redact-before-anything rule the audit write
+obeys), using the shared ``pii-kit``, so no raw identifier reaches human-review-console over the
+wire; human-review-console redacts again before its own audit write (defence in depth). "Every" is
+written out here because the earlier version masked ``subject``, ``summary`` and the citation
+``snippet`` while ``case_ref``, ``source_key`` and the citation ``source_id`` and ``title`` carried
+the same text raw. ``maker`` and ``tenant`` are asserted here and trusted by human-review-console
+because the caller is an authenticated S2S service; per-hop on-behalf-of token exchange is the
+deferred next layer.
 """
 
 from __future__ import annotations
@@ -72,7 +73,7 @@ def _kit_citations(result: TriageResult) -> tuple[KitCitation, ...]:
 
 
 def result_to_review(result: TriageResult, *, maker: str, tenant: str = "") -> Review:
-    """Build the review a producer submits to Hrz7 when a result escalates.
+    """Build the review a producer submits to human-review-console when a result escalates.
 
     Every field carrying the subject is masked, not just the one named ``subject``. ``case_ref``
     and ``source_key`` are both built from it, and neither may carry it RAW while the field
@@ -92,6 +93,6 @@ def result_to_review(result: TriageResult, *, maker: str, tenant: str = "") -> R
         sod_group="rcsa_kri_erm-maker-checker",
         case_ref=redacted_subject,
         # Producer-owned, tenant-scoped key so a retried delivery is idempotent at the console.
-        source_key=f"Erm1:{redacted_subject}:{result.severity.value}",
+        source_key=f"rcsa-kri-erm:{redacted_subject}:{result.severity.value}",
         citations=_kit_citations(result),
     )

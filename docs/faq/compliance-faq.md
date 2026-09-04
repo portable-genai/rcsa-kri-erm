@@ -10,7 +10,7 @@ That is the reason the arithmetic is pure code. `domain/rcsa.py` computes every 
 a frozen, bank-owned `ResidualRiskPolicy`, and three rules make the number mean something:
 
 - **Only accepted ratings score.** `residual_for_assessment` reads `accepted_ratings` and never
-  `proposed_ratings`, so a proposal moves no number until a maker signs it off through Hrz7. An
+  `proposed_ratings`, so a proposal moves no number until a maker signs it off through `human-review-console`. An
   assessment carrying only proposals scores as if it had none.
 - **Effectiveness reduces likelihood, never impact.** A working control makes a loss less likely; it
   does not make the loss smaller. Residual likelihood is floored at 1, so a control can never zero
@@ -104,7 +104,7 @@ against an independent oracle, and five of the seven are proved able to go red b
 What is NOT yet in place: `gemini-3.5-flash` and `text-embedding-004` are pinned defaults in the
 adapters rather than confirmed deployment decisions and both ids are regional, there is no token
 budget, rate limit or kill switch on either seam, no live-model eval run has been registered with
-the Hrz4 promotion gate, and prompt-injection screening through Hrz1 is not bound. Until those
+the `model-quality-gate` promotion gate, and prompt-injection screening through `agent-guardrail-gateway` is not bound. Until those
 close, the managed model paths are not production-cleared and the deterministic path is what should
 be relied on.
 
@@ -122,8 +122,8 @@ interpretation of what any regulator requires of you.
 
 The `Partial` and `TODO (repo owner)` rows in `COMPLIANCE.md`, each of which names exactly what is
 missing. The ones that need a risk acceptance if you go live without them: the three managed reads
-named in `managed_readiness.py` (the Rgc7 control library, the BigQuery metric feed, the Aud3 theme
-feed), a cross-tenant read that refuses rather than returning empty, rule R1 (the Hrz1 guardrail
-binding), rule R5 and P-08 (the Hrz4 metric bundle), P-10 (timeouts, circuit breaker and a
+named in `managed_readiness.py` (the `obligations-control-mapping` control library, the BigQuery metric feed, the `issue-remediation-capa` theme
+feed), a cross-tenant read that refuses rather than returning empty, rule R1 (the `agent-guardrail-gateway`
+binding), rule R5 and P-08 (the `model-quality-gate` metric bundle), P-10 (timeouts, circuit breaker and a
 documented kill switch), and P-01's private-egress rule, which depends on your own network rather
 than on this repo.

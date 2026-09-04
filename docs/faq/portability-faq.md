@@ -16,8 +16,8 @@ severity, merge candidacy, reopen decisions) is pure stdlib in `domain/`, not a 
 
 | Profile | What it is | Who it is for |
 |---|---|---|
-| `local` | SDK-free offline stack: seeded dev personas, a hash-chained SQLite WORM audit log, the demo bank's seeded control library, KRI feed and Aud3 themes, a deterministic hashing embedder and a deterministic stub narrator | dev, test, CI, and the offline demo |
-| `gcp` | the managed stack: IAP identity, Cloud Logging WORM, Gemini narration, Vertex AI embeddings, an authenticated read of Rgc7's control library, a BigQuery metric feed, Aud3's theme feed, an HTTP client to the Hrz7 console | a managed deployment, once its three placeholder reads are implemented |
+| `local` | SDK-free offline stack: seeded dev personas, a hash-chained SQLite WORM audit log, the demo bank's seeded control library, KRI feed and `issue-remediation-capa` themes, a deterministic hashing embedder and a deterministic stub narrator | dev, test, CI, and the offline demo |
+| `gcp` | the managed stack: IAP identity, Cloud Logging WORM, Gemini narration, Vertex AI embeddings, an authenticated read of `obligations-control-mapping`'s control library, a BigQuery metric feed, `issue-remediation-capa`'s theme feed, an HTTP client to the `human-review-console` | a managed deployment, once its three placeholder reads are implemented |
 | `onprem` | fail-fast `NotImplementedError` placeholders | the sovereign exit: a client binds its own in-country implementations here |
 
 `ERM_PROFILE` selects the family. Unset means the offline adapters bind but nobody chose them, which
@@ -26,11 +26,11 @@ withdraws every relaxation rather than granting one.
 ### Is the managed profile actually finished?
 
 The model seams are; three of the reads are not, and the repo says so in code rather than in a
-footnote. `managed_readiness.INCOMPLETE_MANAGED_OPERATIONS` names the Rgc7 control-library read
-(both methods), the BigQuery metric feed and the Aud3 theme feed. The API preflight refuses to boot
+footnote. `managed_readiness.INCOMPLETE_MANAGED_OPERATIONS` names the `obligations-control-mapping` control-library read
+(both methods), the BigQuery metric feed and the `issue-remediation-capa` theme feed. The API preflight refuses to boot
 under a managed profile while one of them is bound, and Terraform's `managed_profile_implemented`
 local (`infra/terraform/managed_readiness.tf`) gates the serving edge the same way. Two of the three
-are waiting on siblings rather than on this repo: Aud3 is unbuilt, so its offline fixture is the
+are waiting on siblings rather than on this repo: `issue-remediation-capa` is unbuilt, so its offline fixture is the
 recorded contract pinned by `tests/contract/test_theme_feed_contract.py`.
 
 ### Is the portability claim tested, or just documented?
@@ -53,8 +53,8 @@ Tested, three ways, all in the offline gate or one command:
 
 ### Where does the data live, and can we take it with us?
 
-This repo deliberately owns very little data. The control library belongs to Rgc7 and is read, never
-mirrored; the themes belong to Aud3 and are read one way; the metric feed is a read. What this
+This repo deliberately owns very little data. The control library belongs to `obligations-control-mapping` and is read, never
+mirrored; the themes belong to `issue-remediation-capa` and are read one way; the metric feed is a read. What this
 service owns is its assessments, its evaluations and its audit trail. The audit trail round-trips to
 and from JSON Lines, so the record of every score, breach, merge proposal and reopen is a file copy.
 The value objects in `domain/erm_models.py` are plain frozen dataclasses, so serialising an

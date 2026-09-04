@@ -1,9 +1,10 @@
 """MetricFeedPort: the KRI/KCI metric feed boundary.
 
-Slice 3 of the Erm1 plan ingests observed metric values and evaluates them against adopted KRI
-thresholds. This port supplies the feed: BigQuery under ``gcp`` (SDK imports lazy), a deterministic
-CSV fixture offline, and an on-prem fail-fast placeholder. The threshold and trend ENGINE
-(``domain/kri.py``) is pure and never touches this port; it is handed the points the port returned.
+Slice 3 of the rcsa-kri-erm plan ingests observed metric values and evaluates them against adopted
+KRI thresholds. This port supplies the feed: BigQuery under ``gcp`` (SDK imports lazy), a
+deterministic CSV fixture offline, and an on-prem fail-fast placeholder. The threshold and trend
+ENGINE (``domain/kri.py``) is pure and never touches this port; it is handed the points the port
+returned.
 
 The read is scoped by ``as_of`` so a replay is pinned to a stated evaluation date and a later
 observation cannot leak into a historical evaluation.

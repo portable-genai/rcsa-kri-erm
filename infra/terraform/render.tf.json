@@ -3,6 +3,6 @@
     "render_region": "asia-southeast1",
     "render_package_name": "rcsa_kri_erm",
     "render_env_prefix": "ERM",
-    "render_catalog_id": "Erm1"
+    "render_repository": "rcsa-kri-erm"
   }
 }

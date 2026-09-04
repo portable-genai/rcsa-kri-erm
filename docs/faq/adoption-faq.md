@@ -12,7 +12,7 @@ names on the service), the Terraform `name_prefix` resource stem (`erm1-svc`) an
 git id in one pass. Preview with `--dry-run`, apply with `--yes`, then recreate the venv,
 `make install`, and run `make gate`. It skips itself, so the renamer is never left half-rewritten,
 and it validates `--resource` against the same regex `infra/terraform/variables.tf` enforces, so a
-stem the stack would refuse fails here rather than at plan time. The catalog id `Erm1` is left alone
+stem the stack would refuse fails here rather than at plan time. The catalog id `rcsa-kri-erm` is left alone
 unless you pass `--catalog-id`, so a fork stays traceable to the entry it descends from. The script
 does the mechanical rename; the human decisions (region, IdP, the seeded bank, the four policies,
 the eval golden sets) are the checklist in `ADOPTING.md`.
@@ -32,15 +32,15 @@ rather than merging `main` continuously.
 
 Four things, and only one of them is code here:
 
-1. **An Rgc7 instance.** This repo reads the control library and keeps no catalog of its own; the
+1. **An `obligations-control-mapping` instance.** This repo reads the control library and keeps no catalog of its own; the
    port has no write method, so there is no shortcut. Offline, `adapters/local/seed.py` stands in.
 2. **A metric feed.** `MetricFeedPort` is a BigQuery read under `gcp` and a seeded fixture offline.
    Implementing it against your own warehouse is real work and the managed adapter is a placeholder
    today.
-3. **Aud3, eventually.** The theme feed is one way and Aud3 is unbuilt. The offline fixture is the
+3. **`issue-remediation-capa`, eventually.** The theme feed is one way and `issue-remediation-capa` is unbuilt. The offline fixture is the
    RECORDED CONTRACT, pinned by `tests/contract/test_theme_feed_contract.py`, so the remote adapter
-   can be swapped in without a domain change when Aud3 ships.
-4. **The review console.** An Hrz7 deployment reachable at `HUMAN_REVIEW_URL`. The managed router
+   can be swapped in without a domain change when `issue-remediation-capa` ships.
+4. **The review console.** An `human-review-console` deployment reachable at `HUMAN_REVIEW_URL`. The managed router
    REFUSES to swallow an escalation when this is empty, so a fork cannot ship rule R8 unwired and
    green.
 
@@ -107,9 +107,9 @@ keys and the `facts` dict the checks read.
 
 [`../practices-audit.md`](../practices-audit.md) carries the per-check verdict and the work list.
 The ones that matter most before production: the three managed reads named in
-`managed_readiness.py` (the Rgc7 control library, the BigQuery metric feed, the Aud3 theme feed),
+`managed_readiness.py` (the `obligations-control-mapping` control library, the BigQuery metric feed, the `issue-remediation-capa` theme feed),
 HTTP and CLI surfaces for the ERM engines rather than agent tools alone, a cross-tenant read that
-refuses instead of returning empty, binding the Hrz1 guardrail gateway, registering this repo's
-metric bundle with Hrz4 so `eval/run_eval.py --mode gate` has an authority to ask, and B4. The
+refuses instead of returning empty, binding the `agent-guardrail-gateway`, registering this repo's
+metric bundle with `model-quality-gate` so `eval/run_eval.py --mode gate` has an authority to ask, and B4. The
 Terraform stack is written, validated and tested against a mocked provider; it has never been
 applied.

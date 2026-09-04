@@ -1,13 +1,14 @@
-"""The control-triad boundary: this repo keeps NO parallel control catalog (same as Aud2).
+"""The control-triad boundary: this repo keeps NO parallel control catalog (same as
+continuous-controls-monitoring).
 
-Rgc7 is the SINGLE SYSTEM OF RECORD for the obligation to policy to control to evidence graph. Erm1
-CONSUMES the control library one-way and persists only RATINGS and ASSESSMENTS keyed on Rgc7's
-control ids. This suite proves that boundary structurally, so it cannot erode into a parallel
-catalog one convenient write method at a time:
+obligations-control-mapping is the SINGLE SYSTEM OF RECORD for the obligation to policy to control
+to evidence graph. rcsa-kri-erm CONSUMES the control library one-way and persists only RATINGS and
+ASSESSMENTS keyed on obligations-control-mapping's control ids. This suite proves that boundary
+structurally, so it cannot erode into a parallel catalog one convenient write method at a time:
 
-* the only port onto controls is READ-ONLY: its Protocol exposes no mutating method;
-* no registered port is a control-catalog STORE (a writable catalog by another name);
-* the theme feed onto Aud3 is likewise read-only (Aud3 owns thematic RCA).
+* the only port onto controls is READ-ONLY: its Protocol exposes no mutating method; * no registered
+  port is a control-catalog STORE (a writable catalog by another name); * the theme feed onto
+  issue-remediation-capa is likewise read-only (issue-remediation-capa owns thematic RCA).
 """
 
 from __future__ import annotations
@@ -52,7 +53,9 @@ def test_control_library_port_is_read_only() -> None:
 
 def test_theme_feed_port_is_read_only() -> None:
     methods = _public_methods(ThemeFeedPort)
-    assert set(methods) == {"themes"}, "the Aud3 theme feed is one-way; it exposes no write path"
+    assert set(methods) == {"themes"}, (
+        "the issue-remediation-capa theme feed is one-way; it exposes no write path"
+    )
 
 
 def test_no_registered_port_is_a_control_catalog_store() -> None:
@@ -62,6 +65,7 @@ def test_no_registered_port_is_a_control_catalog_store() -> None:
             token in lowered for token in ("catalog", "store", "inventory", "registry")
         )
         assert not is_catalog_store, (
-            f"{port_name!r} names a control catalog store; Rgc7 owns the catalog and this repo "
+            f"{port_name!r} names a control catalog store; obligations-control-mapping owns the "
+            f"catalog and this repo "
             "keeps none of its own"
         )

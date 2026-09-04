@@ -1,8 +1,8 @@
 """The ERM orchestration service: R8 routing on consequential outcomes, audit hygiene.
 
 Proves the seam rules the plan requires: every consequential outcome (an amber/red RCSA line, a
-merge proposal, a KRI breach, a theme reopen) is ROUTED to Hrz7 in the same call that produced it,
-a green RCSA line is not, and no raw identifier survives into an audit record.
+merge proposal, a KRI breach, a theme reopen) is ROUTED to human-review-console in the same call
+that produced it, a green RCSA line is not, and no raw identifier survives into an audit record.
 """
 
 from __future__ import annotations

@@ -1,9 +1,9 @@
 """The A2A discovery card: what this agent can be asked to do, in one machine-readable place.
 
-Served at ``/.well-known/agent-card.json`` and registrable with Hrz3 (rule R4). The card is
-built from the SAME tool table the runtime binds, so an agent cannot advertise a skill it does
-not implement or implement one it never advertises; ``tests/unit/test_agent_surface.py`` fails
-the build when the two disagree.
+Served at ``/.well-known/agent-card.json`` and registrable with agent-registry (rule R4). The card
+is built from the SAME tool table the runtime binds, so an agent cannot advertise a skill it does
+not implement or implement one it never advertises; ``tests/unit/test_agent_surface.py`` fails the
+build when the two disagree.
 
 Pure: domain types and stdlib only, no ADK and no cloud SDK, so the card can be generated and
 inspected offline.
@@ -74,7 +74,8 @@ SKILLS: tuple[AgentSkill, ...] = (
         id="propose_control_merges",
         name="Control de-duplication",
         description=(
-            "Read Rgc7's control library (this repo keeps no catalog), embed each control, and "
+            "Read obligations-control-mapping's control library (this repo keeps no catalog), "
+            "embed each control, and "
             "propose duplicate pairs by cosine similarity, ROUTING every proposed merge to human "
             "review rather than applying it (rule R8)."
         ),
@@ -88,7 +89,7 @@ SKILLS: tuple[AgentSkill, ...] = (
 _DESCRIPTION = " ".join(
     (
         "RCSA, KRI and ERM Operating Copilot",
-        "(Erm1).",
+        "(rcsa-kri-erm).",
         "Deterministic decision, cited output, redact-before-audit, and every",
         "consequential result routed to a human reviewer.",
     )

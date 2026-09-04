@@ -1,4 +1,4 @@
-# DEMO: RCSA, KRI and ERM Operating Copilot (Erm1)
+# DEMO: RCSA, KRI and ERM Operating Copilot (`rcsa-kri-erm`)
 
 Everything here runs **offline**: no cloud project, no credentials, no API key, no browser
 engine, no bundler. That is the first thing to say out loud, because it is the claim the rest of

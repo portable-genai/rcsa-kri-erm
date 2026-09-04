@@ -1,15 +1,16 @@
-"""Aud3 theme consumption: attach themes to assessments, decide reopens deterministically.
+"""issue-remediation-capa theme consumption: attach themes to assessments, decide reopens
+deterministically.
 
-Slice 4 of the Erm1 plan. Aud3 owns thematic RCA; this repo CONSUMES its themes one-way as a risk
-signal (Aud3 is not yet built, so the read is served by a frozen-fixture adapter whose contract is
-pinned by a fixture test). The consequential decision here is which assessments REOPEN for review,
-and it is a pure, config-owned rule set:
+Slice 4 of the rcsa-kri-erm plan. issue-remediation-capa owns thematic RCA; this repo CONSUMES its
+themes one-way as a risk signal (issue-remediation-capa is not yet built, so the read is served by a
+frozen-fixture adapter whose contract is pinned by a fixture test). The consequential decision here
+is which assessments REOPEN for review, and it is a pure, config-owned rule set:
 
 * a theme attaches to an assessment when the theme names that assessment's ``control_id``;
 * an attached theme forces a reopen when its ``weight`` is at or above the config floor.
 
 A reopen is consequential (it puts a signed-off assessment back in the maker's queue), so the
-service routes it to Hrz7. This module only decides; it performs no I/O.
+service routes it to human-review-console. This module only decides; it performs no I/O.
 """
 
 from __future__ import annotations

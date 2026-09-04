@@ -1,6 +1,6 @@
 # Adopting this repo as your base
 
-This repository (Erm1, RCSA, KRI and ERM Operating Copilot) is a **common base** that a bank or
+This repository (`rcsa-kri-erm`, RCSA, KRI and ERM Operating Copilot) is a **common base** that a bank or
 other regulated institution forks to build its own **second-line ERM operating copilot**: the
 service that scores residual risk on an RCSA assessment, evaluates KRIs against adopted thresholds,
 proposes control de-duplications, and reopens signed-off assessments when a thematic finding lands
@@ -30,10 +30,10 @@ risk artifacts.
 | **Vertical-neutral machinery** | `domain/kernel.py` (`Citation`, `AuditEvent`, `Severity`, `Decision`, `utcnow`), every Protocol in `ports/`, the container wiring in `config.py` | keep untouched |
 | **Engine machinery** | the arithmetic in `domain/rcsa.py`, the banding and trend reading in `domain/kri.py`, the cosine similarity in `domain/dedup.py`, the attach-and-reopen rules in `domain/themes.py`, the schema and groundedness checks in `domain/erm_narration.py` | keep untouched; the shapes are vertical-neutral |
 | **Policy (your numbers and rules)** | `ResidualRiskPolicy` in `domain/rcsa.py` (the effectiveness reduction steps, the band cuts, the review floor), `KriPolicy` in `domain/kri.py` (the driver weights and the breach-severity bands), `DEFAULT_SIMILARITY_FLOOR` in `domain/dedup.py`, `ThemeTriggerPolicy` in `domain/themes.py` (the reopen weight floor), the severity keyword bands in `domain/triage_service.py`, the jurisdiction list in `domain/pii.py`, the metric thresholds in `eval/run_eval.py` | change deliberately (see section 4) |
-| **Vertical (the bank's content)** | the seeded control library, KRI definitions, metric feed and Aud3 themes in `adapters/local/seed.py`, the narration system prompt in `domain/erm_narration.py`, the eval golden sets in `eval/datasets/` | reseed and rewrite for your own institution |
+| **Vertical (the bank's content)** | the seeded control library, KRI definitions, metric feed and `issue-remediation-capa` themes in `adapters/local/seed.py`, the narration system prompt in `domain/erm_narration.py`, the eval golden sets in `eval/datasets/` | reseed and rewrite for your own institution |
 
 If your product is another *rate it, threshold it, escalate it* service, the hexagon, the three
-profiles, the deterministic-verdict pattern, the eval gate and the Hrz7 review routing transfer
+profiles, the deterministic-verdict pattern, the eval gate and the `human-review-console` review routing transfer
 directly; you replace the seeded content and retune the policy.
 
 ## 2. Core-vs-adopter-owned files (so upstream merges stay mechanical)
@@ -77,7 +77,7 @@ make gate
 `--dist` defaults to the `--resource` value; pass it explicitly when your git id differs from your
 resource stem. `--resource` is validated against the same regex the Terraform `name_prefix`
 variable enforces, so a stem the stack would refuse fails here instead of at plan time. Add
-`--include-docs` to sweep Markdown prose too. The catalog id `Erm1` is left alone unless you pass
+`--include-docs` to sweep Markdown prose too. The catalog id `rcsa-kri-erm` is left alone unless you pass
 `--catalog-id`, so a fork stays traceable to the entry it descends from. The script skips itself, so
 the renamer is never left half-rewritten, and it deliberately does NOT touch the human decisions
 below.
@@ -95,11 +95,11 @@ below.
    placeholder. Wire your issuer on the deployed service (auth is configured ON the service, not in
    this code) and set `ERM_IAP_AUDIENCE`. An unset or emptied audience refuses every caller rather
    than verifying without one.
-3. **The control library is NOT yours to create here.** Rgc7 owns the obligation to policy to
+3. **The control library is NOT yours to create here.** `obligations-control-mapping` owns the obligation to policy to
    control to evidence graph, and `ControlLibraryPort` is deliberately READ-ONLY so this repo cannot
    grow a second catalog (`tests/contract/test_no_control_catalog.py` proves there is no write
    method). Offline, `adapters/local/seed.py` stands in as the demo bank's library. In a deployment
-   you point the managed adapter at your Rgc7 instance and key your RCSA ratings on its
+   you point the managed adapter at your `obligations-control-mapping` instance and key your RCSA ratings on its
    `control_id`.
 4. **Policy your risk function owns.** Four frozen dataclasses decide everything consequential:
    - `ResidualRiskPolicy` (`domain/rcsa.py`): how much each effectiveness level reduces likelihood,
@@ -146,7 +146,7 @@ below.
    bucket, the load-balancer-only serving edge) and the loopback-by-default binding before you
    expose anything. The WORM lock is irreversible: confirm `retention_days` before the first apply.
    Note also `managed_readiness.INCOMPLETE_MANAGED_OPERATIONS`: the API preflight refuses to boot
-   under a managed profile while the Rgc7 control-library read, the BigQuery metric feed or the Aud3
+   under a managed profile while the `obligations-control-mapping` control-library read, the BigQuery metric feed or the `issue-remediation-capa`
    theme feed is still a placeholder, so implementing those three is part of going managed.
 
 ## 5. Do not duplicate the platform
@@ -155,26 +155,26 @@ This repo is one system in a catalog of composable GRC systems. It is deliberate
 second-line ERM cycle and a READER of everything else. What it integrates rather than rebuilds (see
 [`faq/features-faq.md`](faq/features-faq.md) for the full map):
 
-- **Rgc7** obligations and control mapping: owns the control library and the evidence graph, read
+- `obligations-control-mapping` and control mapping: owns the control library and the evidence graph, read
   over `ControlLibraryPort`. This repo keeps NO control catalog, and the port has no write method so
   it cannot acquire one by accident.
-- **Aud2** continuous controls monitoring: owns control-effectiveness testing. Its results reach
-  this repo as effectiveness on the control records Rgc7 exposes, not through a second testing
+- `continuous-controls-monitoring` continuous controls monitoring: owns control-effectiveness testing. Its results reach
+  this repo as effectiveness on the control records `obligations-control-mapping` exposes, not through a second testing
   engine here.
-- **Aud3** issue, remediation and CAPA with thematic analysis: owns thematic root-cause analysis.
+- `issue-remediation-capa` issue, remediation and CAPA with thematic analysis: owns thematic root-cause analysis.
   This repo consumes its themes one way over `ThemeFeedPort` and never writes back.
-- **Hrz7** human-review / maker-checker console: every consequential outcome is routed to it over
+- `human-review-console` human-review / maker-checker console: every consequential outcome is routed to it over
   the shared `review-kit` (rule R8); you wire your endpoint (`HUMAN_REVIEW_URL`), you do not
   re-implement the console.
-- **Hrz5** observability plus immutable WORM audit: audit events and trace spans go to it through
+- `agent-observability` plus immutable WORM audit: audit events and trace spans go to it through
   `AuditSinkPort` and `ObservabilityTracerPort`.
-- **Hrz4** AI-quality / model-risk gate: owns promotion. `eval/run_eval.py --mode gate` is the
+- `model-quality-gate` AI-quality / model-risk gate: owns promotion. `eval/run_eval.py --mode gate` is the
   client half and refuses to run off the managed profile.
-- **Hrz3** agent registry: this agent publishes its A2A card at `/.well-known/agent-card.json`;
+- `agent-registry`: this agent publishes its A2A card at `/.well-known/agent-card.json`;
   register it rather than inventing a discovery mechanism.
 
-The guardrail gateway (Hrz1) is **not** integrated today, and the enterprise knowledge base (Hrz2)
-is not either. Hrz1 becomes mandatory the moment untrusted free text reaches the narrator: see rule
+The guardrail gateway (`agent-guardrail-gateway`) is **not** integrated today, and the enterprise knowledge base (`enterprise-knowledge-base`)
+is not either. `agent-guardrail-gateway` becomes mandatory the moment untrusted free text reaches the narrator: see rule
 R1 in [`../COMPLIANCE.md`](../COMPLIANCE.md).
 
 ## 6. Adoption checklist
@@ -183,7 +183,7 @@ R1 in [`../COMPLIANCE.md`](../COMPLIANCE.md).
 - [ ] Set the region in all three places (settings, `render.tf.json`, tfvars) and re-ran the
       Terraform residency tests.
 - [ ] Wired your IdP audience on the deployed service (this repo owns no login flow).
-- [ ] Pointed the control-library read at your Rgc7 instance and keyed your ratings on its
+- [ ] Pointed the control-library read at your `obligations-control-mapping` instance and keyed your ratings on its
       `control_id`, rather than seeding a catalog here.
 - [ ] Replaced the seed bank with your own controls, KRI definitions, metric feed and themes.
 - [ ] Owned the four policy dataclasses with your risk function, and re-calibrated the de-dup
@@ -194,7 +194,7 @@ R1 in [`../COMPLIANCE.md`](../COMPLIANCE.md).
 - [ ] Rebuilt all five eval golden sets.
 - [ ] Reviewed the deploy posture (Dockerfile, Terraform, `retention_days`, bind address) and worked
       through `managed_readiness.INCOMPLETE_MANAGED_OPERATIONS`.
-- [ ] Wired your Hrz7 review endpoint and decided which sibling services you integrate vs stub.
+- [ ] Wired your `human-review-console` review endpoint and decided which sibling services you integrate vs stub.
 - [ ] Read [`model-card.md`](model-card.md) and closed its remaining controls before enabling the
       managed narrator.
 - [ ] Recorded your baseline upstream tag so you can take future fixes.

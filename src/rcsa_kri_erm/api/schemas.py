@@ -24,7 +24,8 @@ class TriageResponse(BaseModel):
     decision: str
     summary: str
     requires_human_review: bool
-    #: Where the escalation WENT (rule R8): the Hrz7 review id, or the local queue reference.
+    #: Where the escalation WENT (rule R8): the human-review-console review id, or the local queue
+    #: reference.
     #: Empty only when the result did not escalate. A caller can tell a routed escalation from
     #: a flag that stopped here, which is the whole point of the rule.
     review_ref: str = ""

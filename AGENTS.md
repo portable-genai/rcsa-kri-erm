@@ -7,7 +7,7 @@ here. Read it first. This file carries only what is specific to this one.
 
 ## What this is
 
-RCSA, KRI and ERM Operating Copilot (Erm1): Second-line ERM copilot with a deterministic residual-risk and KRI-breach engine.
+RCSA, KRI and ERM Operating Copilot (`rcsa-kri-erm`): Second-line ERM copilot with a deterministic residual-risk and KRI-breach engine.
 Rendered from `hex-service-template`, so it starts at reference parity rather than converging
 toward it. Package `rcsa_kri_erm`, environment prefix
 `ERM`, region `asia-southeast1`.
