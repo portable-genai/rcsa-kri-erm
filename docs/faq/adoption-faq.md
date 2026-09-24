@@ -40,9 +40,9 @@ Four things, and only one of them is code here:
 3. **`issue-remediation-capa`, eventually.** The theme feed is one way and `issue-remediation-capa` is unbuilt. The offline fixture is the
    RECORDED CONTRACT, pinned by `tests/contract/test_theme_feed_contract.py`, so the remote adapter
    can be swapped in without a domain change when `issue-remediation-capa` ships.
-4. **The review console.** An `human-review-console` deployment reachable at `HUMAN_REVIEW_URL`. The managed router
-   REFUSES to swallow an escalation when this is empty, so a fork cannot ship rule R8 unwired and
-   green.
+4. **The review console.** An `human-review-console` deployment reachable at `HUMAN_REVIEW_URL`. With review routing
+   on (the default), the managed profile REFUSES TO BOOT when this is empty, so a fork cannot ship
+   rule R8 unwired and green; `ERM_REVIEW_ROUTING=off` is the stated way to run without it.
 
 ### How do I add a new outbound dependency (a new port)?
 

@@ -37,8 +37,11 @@ A human, always, for anything consequential. Setting `requires_human_review` and
 four kinds of outcome the moment each is produced: an assessment whose worst residual band reaches
 the review floor, every proposed control merge, every KRI breach and every theme-driven reopen.
 `tests/unit/test_review_routing.py` asserts the routing rather than the flag, a CRITICAL band demands
-two approvals rather than one (`adapters/_review_payload.py`), and under the managed profile the
-router REFUSES when no console is configured, so a deployment cannot swallow an escalation silently.
+two approvals rather than one (`adapters/_review_payload.py`), and under the managed profile a
+deployment with routing on and no console configured REFUSES TO BOOT. A hand-off that fails at
+request time is reported to the caller as `review_routing: "failed"` and logged, so an escalation
+is never swallowed silently. `ERM_REVIEW_ROUTING=off` switches routing off, and every result then
+says so.
 
 ### Where does the data live, and is residency enforced or just documented?
 

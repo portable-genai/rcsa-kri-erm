@@ -267,9 +267,15 @@ variable "human_review_url" {
   }
 
   validation {
-    condition     = !var.production_edge_enabled || can(regex("^https://", var.human_review_url))
-    error_message = "production_edge_enabled requires human_review_url (rule R8): the managed review router refuses to run with no console configured."
+    condition     = !var.production_edge_enabled || !var.review_routing_enabled || can(regex("^https://", var.human_review_url))
+    error_message = "production_edge_enabled with review_routing_enabled requires human_review_url (rule R8): the service refuses to boot with routing on and no console named. Name one, or set review_routing_enabled = false."
   }
+}
+
+variable "review_routing_enabled" {
+  description = "Switch review routing to the human-review-console (the service's _REVIEW_ROUTING variable). A cheap runtime control: on in the reference, reversible, so it takes a default."
+  type        = bool
+  default     = true
 }
 
 variable "quality_service_url" {
