@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any
 from hex_service_kit.serialization import to_jsonable
 from pii_kit import redact
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import Container, Settings, build_container
 from ..domain.erm_models import ControlEffectiveness, RcsaAssessment, RiskRating
 from ..domain.erm_service import ErmService
@@ -61,11 +62,15 @@ def _require_tenant(tenant: str, *, tool: str) -> str:
     return tenant
 
 
-def _erm_service(container: Container) -> ErmService:
-    """Assemble the ERM orchestration service from the container's bound ports."""
+def _erm_service(container: Container, routing: RecordingReviewRouter) -> ErmService:
+    """Assemble the ERM orchestration service from the container's bound ports.
+
+    The review router is the caller's recording wrapper around the bound one, so the domain
+    routes exactly as before while the tool learns what happened to every hand-off.
+    """
     return ErmService(
         audit=container.audit,
-        review_router=container.review_router,
+        review_router=routing,
         generation=container.generation,
         control_library=container.control_library,
         embeddings=container.embeddings,
@@ -116,9 +121,10 @@ def triage_case(
 
     Returns:
       A JSON-safe result dict with every string masked for personal data (P-04: a tool result
-      goes into a model's context), plus ``review_ref``: where the escalation WENT. It is empty
-      only when the result did not escalate, so a caller can tell a routed escalation from a
-      flag nobody read.
+      goes into a model's context), plus ``review_ref``: where the escalation WENT, and
+      ``review_routing``: ``routed``, ``failed`` (the hand-off failed and the case is NOT queued),
+      ``off`` (routing is switched off) or ``not_required``. ``review_ref`` is empty unless the
+      escalation was routed, so a caller can tell a routed escalation from a flag nobody read.
 
     Raises:
       TenantAccessDeniedError: no tenant was named, so no partition may be chosen for the caller.
@@ -127,15 +133,15 @@ def triage_case(
     container = _container(settings)
     case = TriageInput(subject=subject, text=text)
     result = TriageService(container.audit, tracer=container.tracer).triage(case, actor=actor)
-    review_ref = ""
-    if result.requires_human_review:
-        review_ref = container.review_router.route(result, maker=actor, tenant=tenant)
+    routing = RecordingReviewRouter(container.review_router)
+    review_ref = routing.route(result, maker=actor, tenant=tenant)
     payload = _redacted(to_jsonable(result))
     if not isinstance(payload, dict):  # pragma: no cover - dataclasses serialise to objects
         raise TypeError("a triage result must serialise to a JSON object")
     # Attached after the redaction pass: it is a routing reference, not narrative text, and
     # masking an identifier would break the caller's ability to look the review up.
     payload["review_ref"] = review_ref
+    payload["review_routing"] = routing.outcome.value
     return payload
 
 
@@ -195,7 +201,8 @@ def assess_rcsa_control(
 
     Returns:
       A JSON-safe dict (strings masked for personal data) with the residual band, the engine
-      note and ``review_ref``: empty unless the assessment escalated.
+      note, ``review_ref`` (empty unless the assessment escalated and was routed) and
+      ``review_routing`` (``routed``, ``failed``, ``off`` or ``not_required``).
 
     Raises:
       TenantAccessDeniedError: no tenant was named, so no partition may be chosen for the caller.
@@ -209,7 +216,8 @@ def assess_rcsa_control(
         effectiveness=ControlEffectiveness(effectiveness),
     )
     assessment = RcsaAssessment(control_id=control_id, tenant=tenant, accepted_ratings=(rating,))
-    outcome = _erm_service(container).assess_rcsa(assessment, actor=actor)
+    routing = RecordingReviewRouter(container.review_router)
+    outcome = _erm_service(container, routing).assess_rcsa(assessment, actor=actor)
     payload = _redacted(
         {
             "control_id": outcome.control_id,
@@ -222,6 +230,7 @@ def assess_rcsa_control(
     if not isinstance(payload, dict):  # pragma: no cover - dicts serialise to objects
         raise TypeError("an RCSA outcome must serialise to a JSON object")
     payload["review_ref"] = outcome.review_ref
+    payload["review_routing"] = routing.outcome.value
     return payload
 
 
@@ -244,14 +253,16 @@ def propose_control_merges(
       actor: The verified identity this call is attributed to.
 
     Returns:
-      A JSON-safe dict with the proposed pairs and their ``review_refs``.
+      A JSON-safe dict with the proposed pairs, their ``review_refs`` (empty for a proposal
+      whose hand-off failed or was switched off) and ``review_routing`` for the sweep.
 
     Raises:
       TenantAccessDeniedError: no tenant was named, or the bound library does not serve it.
     """
     tenant = _require_tenant(tenant, tool="propose_control_merges")
     container = _container(settings)
-    outcome = _erm_service(container).propose_control_merges(tenant, actor=actor)
+    routing = RecordingReviewRouter(container.review_router)
+    outcome = _erm_service(container, routing).propose_control_merges(tenant, actor=actor)
     payload = _redacted(
         {
             "candidates": [
@@ -263,6 +274,7 @@ def propose_control_merges(
     )
     if not isinstance(payload, dict):  # pragma: no cover - dicts serialise to objects
         raise TypeError("a merge outcome must serialise to a JSON object")
+    payload["review_routing"] = routing.outcome.value
     return payload
 
 
