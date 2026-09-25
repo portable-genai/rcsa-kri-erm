@@ -31,6 +31,10 @@ class GenerationRequest:
     facts: tuple[tuple[str, str], ...] = ()
     response_keys: tuple[str, ...] = ("note",)
     max_output_tokens: int = 512
+    #: Sampling temperature. ``None`` means FREE: the adapter omits the parameter entirely (some
+    #: models, Opus 5 and Fable 5, reject it, so free is absent, never ``1.0``). Pin ``0.0``
+    #: only where the output is classified, extracted, scored or compared against a check.
+    temperature: float | None = None
 
 
 @dataclass(frozen=True, slots=True)
