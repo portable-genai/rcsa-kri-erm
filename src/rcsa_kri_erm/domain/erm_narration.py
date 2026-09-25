@@ -77,6 +77,7 @@ def build_request(
         f"Facts (use ONLY these numbers):\n{block}\n"
         'Return JSON of the form {"note": "<one or two sentences>"}.'
     )
+    # Free (no temperature sent): a drafted note. The grounding check, not the sampler, bounds it.
     return GenerationRequest(system=_SYSTEM, prompt=prompt, facts=facts, response_keys=("note",))
 
 

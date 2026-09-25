@@ -11,7 +11,9 @@ from __future__ import annotations
 
 import json
 
-from ...config import Settings
+from hex_service_kit import provenance
+
+from ...config import OFFLINE_STUB_MODEL, Settings
 from ...ports.generation import GenerationRequest, GenerationResponse
 
 
@@ -24,4 +26,6 @@ class LocalGenerationAdapter:
     def generate(self, request: GenerationRequest) -> GenerationResponse:
         restated = "; ".join(f"{key}={value}" for key, value in request.facts)
         note = f"Restating engine figures: {restated}." if restated else "No figures to restate."
-        return GenerationResponse(text=json.dumps({"note": note}), model="local-deterministic")
+        # The stub answered: it notes the same name ``generator_model`` reports under ``local``.
+        provenance.note_model(OFFLINE_STUB_MODEL)
+        return GenerationResponse(text=json.dumps({"note": note}), model=OFFLINE_STUB_MODEL)
