@@ -31,6 +31,8 @@ from rcsa_kri_erm.domain.kernel import (
     AuditEvent,
     Citation,
     Decision,
+    Direction,
+    GuardrailVerdict,
     Severity,
 )
 from rcsa_kri_erm.domain.models import (
@@ -66,6 +68,10 @@ CANONICAL_RESULT = TriageResult(
 
 #: The inbound transport context every identity implementation is handed.
 CANONICAL_CONTEXT = RequestContext(headers={"x-dev-persona": "auditor"})
+
+#: Benign text every guardrail implementation is handed: it must not match the local family's
+#: own block patterns, or the "offline family answers" case would look identical to a block.
+CANONICAL_GUARDRAIL_TEXT = "please summarise the residual-risk posture for the control"
 
 
 @dataclass(frozen=True, slots=True)
@@ -119,6 +125,18 @@ def _generation_invoke(adapter: Any) -> Any:
 def _generation_answered(_adapter: Any, result: Any) -> bool:
     text = getattr(result, "text", "")
     return bool(text) and '"note"' in text
+
+
+def _guardrail_invoke(adapter: Any) -> Any:
+    return adapter.screen(CANONICAL_GUARDRAIL_TEXT, Direction.INPUT)
+
+
+def _guardrail_answered(_adapter: Any, result: Any) -> bool:
+    return (
+        isinstance(result, GuardrailVerdict)
+        and result.allowed
+        and result.sanitized_text == CANONICAL_GUARDRAIL_TEXT
+    )
 
 
 def _control_library_invoke(adapter: Any) -> Any:
@@ -202,6 +220,13 @@ CANONICAL_CALLS: dict[str, PortCase] = {
         # The managed narrator lazily imports the Gemini SDK, absent offline and in CI.
         managed_refusal=(ImportError,),
         detail="narrate a grounded note from the engine facts",
+    ),
+    "guardrail": PortCase(
+        invoke=_guardrail_invoke,
+        answered=_guardrail_answered,
+        # The lazy `google.cloud` import is the first thing the managed adapter does.
+        managed_refusal=(ImportError,),
+        detail="screen one benign generation call and allow it unchanged",
     ),
     "control_library": PortCase(
         invoke=_control_library_invoke,

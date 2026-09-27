@@ -27,6 +27,7 @@ from ..ports.audit import AuditSinkPort
 from ..ports.control_library import ControlLibraryPort
 from ..ports.embeddings import EmbeddingsPort
 from ..ports.generation import GenerationPort
+from ..ports.guardrail import GuardrailPort
 from ..ports.metric_feed import MetricFeedPort
 from ..ports.observability import ObservabilityTracerPort
 from ..ports.review_router import ReviewRouterPort
@@ -130,6 +131,7 @@ class ErmService:
         audit: AuditSinkPort,
         review_router: ReviewRouterPort,
         generation: GenerationPort,
+        guardrail: GuardrailPort,
         control_library: ControlLibraryPort,
         embeddings: EmbeddingsPort,
         metric_feed: MetricFeedPort,
@@ -150,7 +152,8 @@ class ErmService:
         # traced because the exporter was bound. A surface that forgets the tracer fails to
         # construct instead, which is a failure somebody sees.
         self._tracer = tracer
-        self._narrator = NarrationService(generation)
+        # Rule R1: the narrator screens every prompt before, and every note after, the model call.
+        self._narrator = NarrationService(generation, guardrail=guardrail, audit=audit)
         self._residual_policy = residual_policy or ResidualRiskPolicy()
         self._kri_policy = kri_policy or KriPolicy()
         self._theme_policy = theme_policy or ThemeTriggerPolicy()
@@ -186,7 +189,12 @@ class ErmService:
                 ("worst_band", band.value),
             )
             note = self._narrator.narrate(
-                f"RCSA {assessment.control_id}", facts, "Summarise the residual-risk posture."
+                f"RCSA {assessment.control_id}",
+                facts,
+                "Summarise the residual-risk posture.",
+                action="rcsa_assess",
+                actor=actor,
+                severity=band_to_severity(band),
             ).text
             citations = (
                 Citation(
@@ -285,10 +293,14 @@ class ErmService:
                 continue
             breaches.append(breach)
             facts = breach.drivers
+            severity = Severity.CRITICAL if breach.severity is RagBand.RED else Severity.HIGH
             note = self._narrator.narrate(
                 f"KRI {breach.kri_id}",
                 facts,
                 "Draft the breach narrative, probable cause and committee commentary.",
+                action="kri_breach",
+                actor=actor,
+                severity=severity,
             ).text
             notes.append(note)
             citations = (
@@ -298,7 +310,6 @@ class ErmService:
                     snippet=f"score {breach.score} severity {breach.severity.value}",
                 ),
             )
-            severity = Severity.CRITICAL if breach.severity is RagBand.RED else Severity.HIGH
             refs.append(
                 self._route(
                     subject=f"KRI {breach.kri_id}",

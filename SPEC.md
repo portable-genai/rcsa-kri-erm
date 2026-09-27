@@ -28,6 +28,11 @@ Locked decisions, pinned stack, contracts. This document is the deepest authorit
   escalation from one that stopped here. Under the managed profile, routing on with no console
   configured refuses at boot; a hand-off that fails at request time is reported as `failed` and
   logged rather than failing the result. `ERM_REVIEW_ROUTING` switches routing (default on).
+- **Guardrail (R1)**: the committee-note narration is screened INPUT (the scope, then the whole
+  prompt) before the model is called and OUTPUT (the parsed note) before it may replace the
+  deterministic note. A refusal is audited `blocked` and the deterministic note stands; the
+  assessment or breach is still scored, audited and routed. `ERM_GUARDRAIL` switches it (default
+  on).
 - **Profile**: resolved ONCE, at import, into a `ProfileChoice` and never a bare string. Three
   states of `ERM_PROFILE`: UNSET is NO CHOICE (the SDK-free adapters
   still bind, but the seeded personas are refused, no service-to-service scheme is selected, every

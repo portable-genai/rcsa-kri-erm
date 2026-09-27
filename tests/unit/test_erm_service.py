@@ -28,6 +28,7 @@ def _service(container) -> ErmService:  # type: ignore[no-untyped-def]
         audit=container.audit,
         review_router=container.review_router,
         generation=container.generation,
+        guardrail=container.guardrail,
         control_library=container.control_library,
         embeddings=container.embeddings,
         metric_feed=container.metric_feed,

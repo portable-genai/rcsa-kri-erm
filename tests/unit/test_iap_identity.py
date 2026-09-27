@@ -433,6 +433,7 @@ _REBOUND_SETTINGS = "\n".join(
             line
             for port, cls in (
                 ("generation", "generation:LocalGenerationAdapter"),
+                ("guardrail", "guardrail:LocalHeuristicGuardrailAdapter"),
                 ("control_library", "control_library:LocalControlLibraryAdapter"),
                 ("embeddings", "embeddings:LocalEmbeddingsAdapter"),
                 ("metric_feed", "metric_feed:LocalMetricFeedAdapter"),

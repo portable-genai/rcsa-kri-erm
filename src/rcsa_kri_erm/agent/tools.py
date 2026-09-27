@@ -72,6 +72,7 @@ def _erm_service(container: Container, routing: RecordingReviewRouter) -> ErmSer
         audit=container.audit,
         review_router=routing,
         generation=container.generation,
+        guardrail=container.guardrail,
         control_library=container.control_library,
         embeddings=container.embeddings,
         metric_feed=container.metric_feed,

@@ -116,12 +116,11 @@ grounded by construction. It cannot tell you how a real Gemini reply behaves.
   stub narrator and the hashing embedder. Add a managed-profile run, registered with the `model-quality-gate`
   promotion gate (P-08, rule R5), that scores `breach_narration_groundedness` with the real model
   bound and `merge_precision` with the real embedder bound.
-- **Prompt-injection screening** (rule R1): the `agent-guardrail-gateway` is not bound. Screen any
-  untrusted free text that reaches the facts block, and fail closed to deterministic-only when the
-  screen is unavailable. The exposure is small today, because the facts block carries engine
-  integers, and it grows the moment control descriptions or theme narratives from an external
-  source are passed through. Control text also reaches the EMBEDDER, which is a data path worth
-  screening in its own right.
+- **Prompt-injection screening of the embedder** (rule R1): the narration call is screened in
+  both directions (`domain/erm_narration.py`, `docs/runbook.md`), and a refusal falls back to the
+  deterministic note after an audited `BLOCKED` record. Control text also reaches the EMBEDDER,
+  which produces vectors rather than text a reader acts on and is not screened today; screen it
+  if control descriptions ever arrive from an untrusted source.
 - **Reasoning trace**: the audit record carries the validated note and its provenance, not the
   prompt and reply pair. `COMPLIANCE.md` P-07 records that as owed.
 
