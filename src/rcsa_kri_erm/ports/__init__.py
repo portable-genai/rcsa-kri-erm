@@ -18,6 +18,7 @@ from .audit import AuditSinkPort
 from .control_library import ControlLibraryPort
 from .embeddings import EmbeddingsPort
 from .generation import GenerationPort
+from .guardrail import GuardrailPort
 from .identity import (
     CLIENT_ASSERTED,
     END_USER_AUTH_ATTR,
@@ -42,6 +43,7 @@ PORT_PROTOCOLS: dict[str, type] = {
     "identity": IdentityPort,
     "review_router": ReviewRouterPort,
     "generation": GenerationPort,
+    "guardrail": GuardrailPort,
     "control_library": ControlLibraryPort,
     "embeddings": EmbeddingsPort,
     "metric_feed": MetricFeedPort,
@@ -65,6 +67,7 @@ __all__ = [
     "EmbeddingsPort",
     "EndUserAuthUnavailableError",
     "GenerationPort",
+    "GuardrailPort",
     "IdentityPort",
     "MetricFeedPort",
     "ReviewRouterPort",

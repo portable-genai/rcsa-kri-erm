@@ -776,6 +776,12 @@ def _exit_identity(container: Any) -> Any:
     return container.identity.resolve(RequestContext(headers={"x-dev-persona": "approver"}))
 
 
+def _exit_guardrail(container: Any) -> Any:
+    from rcsa_kri_erm.domain.kernel import Direction
+
+    return container.guardrail.screen("routine residual-risk note", Direction.INPUT)
+
+
 def _exit_generation(container: Any) -> Any:
     return container.generation.generate(
         GenerationRequest(
@@ -825,6 +831,7 @@ EXIT_CALLS: dict[str, Callable[[Any], Any]] = {
     "control_library": _exit_control_library,
     "embeddings": _exit_embeddings,
     "generation": _exit_generation,
+    "guardrail": _exit_guardrail,
     "identity": _exit_identity,
     "metric_feed": _exit_metric_feed,
     "review_router": _exit_review,

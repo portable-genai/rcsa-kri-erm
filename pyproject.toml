@@ -48,6 +48,8 @@ gcp = [
   # profile. Found by the lint-gcp job, the first check able to see these imports.
   "google-cloud-bigquery>=3.0",
   "google-genai>=2.0",
+  # adapters/gcp/guardrail.py: Model Armor screens the narration call both ways (rule R1).
+  "google-cloud-modelarmor>=0.7",
 ]
 
 [project.scripts]
